@@ -4,7 +4,10 @@ const {
   getAllScreams, 
   postOneScream,
   getScream,
-  commentOnScream
+  commentOnScream,
+  likeScream,
+  unlikeScream,
+  deleteScream
 } = require('./handlers/Screams')
 const { 
   signUp, 
@@ -18,9 +21,9 @@ const FireBaseAuth = require('./util/FirebaseAuth')
 app.get('/screams', getAllScreams)
 app.post('/scream', FireBaseAuth, postOneScream)
 app.get('/scream/:screamId', getScream)
-// TODO: delete scream
-// TODO: like a scream
-// TODO: unlike a scream
+app.delete('/scream/:screamId', FireBaseAuth, deleteScream)
+app.get('/scream/:screamId/like', FireBaseAuth, likeScream)
+app.get('/scream/:screamId/unlike', FireBaseAuth, unlikeScream)
 app.post('/scream/:screamId/comment', FireBaseAuth, commentOnScream)
 app.post('/signup', signUp)
 app.post('/login', login)
