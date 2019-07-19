@@ -15,7 +15,7 @@ exports.getAllScreams = (req, res) => {
           createdAt: doc.data().createdAt,
           commentCount: doc.data().commentCount,
           likeCount: doc.data().likeCount,
-          userImage: doc.data().userImage
+          userImage: doc.data().imageUrl
         })
       })
       return res.json(screams)
@@ -114,9 +114,8 @@ exports.likeScream = (req, res) => {
     .where('userHandle', '==', req.user.handle)
     .where('screamId', '==', req.params.screamId)
     .limit(1)
-  const screamDocument = db
-    .doc(`/screams/${req.params.screamId}`)
-  let screamData = {}
+  const screamDocument = db.doc(`/screams/${req.params.screamId}`)
+  let screamData;
   screamDocument
     .get()
     .then(doc => {
@@ -124,12 +123,10 @@ exports.likeScream = (req, res) => {
         screamData = doc.data()
         screamData.screamId = doc.id
         return likeDocument.get()
-      } else {
-        return res.status(404).json({ error: 'Scream not found'})
-      }
+      } else return res.status(404).json({ error: 'Scream not found'})
     })
     .then(data => {
-      if (data.empty) 
+      if (data.empty)
         return db
           .collection('likes')
           .add({
@@ -138,13 +135,12 @@ exports.likeScream = (req, res) => {
           })
           .then(() => {
             screamData.likeCount++
-            return screamDocument
-              .update({likeCount: screamData.likeCount})
+            return screamDocument.update({ likeCount: screamData.likeCount })
           })
           .then(() =>{
             return res.json(screamData)
           })
-      else return res.status(400).json({ error: 'Scream already liked'})
+        else return res.status(400).json({ error: 'Scream already liked'})
     })
     .catch(err => {
       console.log(err)

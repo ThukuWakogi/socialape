@@ -130,11 +130,14 @@ exports.getAuthenticatedUser = (req, res) => {
     .doc(`/users/${req.user.handle}`)
     .get()
     .then(doc => {
-      if(doc.exists) userData.credentials = doc.data()
-      return db
-        .collection('likes')
-        .where('userHandle', '==', req.user.handle)
-        .get()
+      if(doc.exists) { 
+        userData.credentials = doc.data()
+        console.log(`userHandle: ${req.user.handle}`)
+        return db
+          .collection('likes')
+          .where('userHandle', '==', req.user.handle)
+          .get()
+      }
     })
     .then(data => {
       userData.likes = []

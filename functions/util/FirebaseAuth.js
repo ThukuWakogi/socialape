@@ -14,9 +14,11 @@ module.exports = (req, res, next) => {
     .verifyIdToken(idToken)
     .then(decodedToken => {
       req.user = decodedToken
-      //console.log(decodedToken)
       return db
-        .collection('users').where('userId', '==', req.user.uid).limit(1).get()
+        .collection('users')
+        .where('userId', '==', req.user.uid)
+        .limit(1)
+        .get()
     })
     .then(data => {
       req.user.handle = data.docs[0].data().handle
